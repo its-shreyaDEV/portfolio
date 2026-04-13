@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shreya Dash | Dev Dhaba 🍛</title>
+  <meta name="description" content="Portfolio of Shreya Dash — Full Stack Developer & AI/ML Engineer. B.Tech CSE at KIIT, Bhubaneswar." />
+  <meta name="author" content="Shreya Dash" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Shreya Dash | Dev Dhaba" />
+  <meta property="og:description" content="Full Stack Dev & AI/ML Engineer — Serving hot code since 2023." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Kalam:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════════════════════════════════
+       CSS VARIABLES & RESET
+    ══════════════════════════════════════ */
+    :root {
+      --bg:           #070510;
+      --bg2:          #0E0B1A;
+      --bg3:          #130F22;
+      --neon-orange:  #FF7B00;
+      --neon-pink:    #FF2D78;
+      --neon-cyan:    #00E5FF;
+      --gold:         #F7C53A;
+      --cream:        #F0E0C0;
+      --wood-dark:    #3A1C0A;
+      --wood:         #5C2E12;
+      --chalk:        #D8D0B8;
+      --board:        #0F2118;
+      --muted:        #6B5E4E;
+      --text:         #D8CCBA;
+      --shadow-warm:  rgba(255, 120, 0, 0.15);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    ::selection { background: rgba(255,123,0,0.3); color: var(--cream); }
+
+    /* ══════════════════════════════════════
+       CUSTOM CURSOR
+    ══════════════════════════════════════ */
+    #cursor {
+      width: 22px; height: 22px;
+      border: 2px solid var(--neon-orange);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9999;
+      transition: transform 0.15s ease, border-color 0.2s;
+      mix-blend-mode: exclusion;
+    }
+    #cursor-dot {
+      width: 5px; height: 5px;
+      background: var(--neon-orange);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9999;
+    }
+    body.hovering #cursor {
+      transform: scale(2.2);
+      border-color: var(--neon-pink);
+    }
+
+    /* ══════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════ */
+    #navbar {
+      position: fixed; top: 0; width: 100%; z-index: 200;
+      padding: 0.9rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(7, 5, 16, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,123,0,0.15);
+      transition: padding 0.3s;
+    }
+    #navbar.scrolled { padding: 0.6rem 3rem; border-color: rgba(255,123,0,0.3); }
+
+    .nav-logo {
+      font-family: 'Yatra One', cursive;
+      font-size: 1.35rem;
+      color: var(--neon-orange);
+      text-shadow: 0 0 18px rgba(255,123,0,0.7), 0 0 40px rgba(255,123,0,0.3);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--text); text-decoration: none;
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      transition: color 0.25s;
+      position: relative; padding-bottom: 3px;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--neon-orange);
+      transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .nav-links a:hover { color: var(--neon-orange); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ══════════════════════════════════════
+       HERO — 3D STALL
+    ══════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: 100px 20px 60px;
+    }
+
+    #stars-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* Ambient ground glow */
+    .ground-glow {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 220px;
+      background: linear-gradient(to top,
+        rgba(255,90,0,0.12) 0%,
+        rgba(255,45,120,0.04) 40%,
+        transparent 100%);
+      pointer-events: none; z-index: 1;
+    }
+
+    /* 3-D perspective container */
+    .stall-3d {
+      perspective: 1400px;
+      width: 780px; max-width: 95vw;
+      position: relative; z-index: 10;
+    }
+
+    .stall-scene {
+      transform-style: preserve-3d;
+      animation: stallFloat 7s ease-in-out infinite;
+    }
+    @keyframes stallFloat {
+      0%,100% { transform: rotateX(1.5deg) translateY(0); }
+      50%      { transform: rotateX(1.5deg) translateY(-10px); }
+    }
+
+    /* — ROOF — */
+    .stall-roof {
+      width: 112%; margin-left: -6%;
+      height: 56px;
+      background: linear-gradient(160deg, #A01010 0%, #CC2200 50%, #8B0000 100%);
+      clip-path: polygon(0 100%, 2.5% 0%, 97.5% 0%, 100% 100%);
+      border-bottom: 3px solid #FF5500;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(255,60,0,0.5), inset 0 2px 0 rgba(255,150,80,0.3);
+    }
+    /* Scalloped fringe */
+    .stall-fringe {
+      width: 112%; margin-left: -6%;
+      height: 22px;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(28, 1fr);
+      align-items: flex-start;
+      overflow: hidden;
+    }
+    .fringe-tooth {
+      height: 22px;
+      background: #8B0000;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      border-right: 1px solid rgba(200,40,0,0.4);
+    }
+    .fringe-tooth:nth-child(even) { background: #AA1000; }
+
+    /* — FAIRY LIGHT WIRE — */
+    .fairy-wire {
+      width: 112%; margin-left: -6%;
+      height: 28px;
+      position: relative;
+      overflow: visible;
+    }
+    .fairy-wire svg {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: visible;
+    }
+
+    /* — STALL BODY — */
+    .stall-body {
+      background: linear-gradient(180deg, #2A1408 0%, #1A0C06 60%, #120806 100%);
+      border: 2px solid rgba(120,60,20,0.7);
+      border-top: none;
+      padding: 32px 44px 26px;
+      position: relative;
+      box-shadow:
+        inset 0 0 80px rgba(0,0,0,0.6),
+        0 24px 70px rgba(0,0,0,0.9),
+        0 0 0 1px rgba(255,123,0,0.08);
+    }
+
+    /* Wood grain overlay */
+    .stall-body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        92deg,
+        transparent 0px,
+        rgba(255,200,100,0.015) 1px,
+        transparent 2px,
+        transparent 8px
+      );
+      pointer-events: none;
+    }
+
+    /* Decorative top ornament stripe */
+    .stall-top-stripe {
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--neon-orange) 0%, var(--neon-orange) 12%,
+        var(--neon-pink) 12%, var(--neon-pink) 25%,
+        var(--gold) 25%, var(--gold) 37%,
+        var(--neon-cyan) 37%, var(--neon-cyan) 50%,
+        var(--neon-orange) 50%, var(--neon-orange) 62%,
+        var(--neon-pink) 62%, var(--neon-pink) 75%,
+        var(--gold) 75%, var(--gold) 87%,
+        var(--neon-cyan) 87%, var(--neon-cyan) 100%
+      );
+      margin-bottom: 24px;
+      box-shadow: 0 0 12px rgba(255,123,0,0.4);
+    }
+
+    /* — NEON SIGN — */
+    .neon-sign {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(2.4rem, 6.5vw, 4.8rem);
+      text-align: center; line-height: 1.1;
+      color: #FF8C00;
+      animation: neonFlicker 10s linear infinite;
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    @keyframes neonFlicker {
+      0%,18%,20%,24%,54%,56%,60%,100% {
+        color: #FF8C00;
+        text-shadow:
+          0 0 6px #fff,
+          0 0 14px #fff,
+          0 0 28px var(--neon-orange),
+          0 0 56px var(--neon-orange),
+          0 0 100px rgba(255,123,0,0.5);
+      }
+      19%,55% { color: rgba(255,123,0,0.25); text-shadow: none; }
+      23%,59%  { color: rgba(255,123,0,0.5); text-shadow: 0 0 4px var(--neon-orange); }
+    }
+
+    .neon-tagline {
+      font-family: 'Kalam', cursive;
+      font-size: clamp(0.95rem, 2.5vw, 1.35rem);
+      text-align: center;
+      color: var(--neon-pink);
+      text-shadow: 0 0 8px rgba(255,45,120,0.6), 0 0 20px rgba(255,45,120,0.25);
+      margin-bottom: 28px;
+      letter-spacing: 0.04em;
+    }
+
+    /* — SMOKE — */
+    .smoke-wrap {
+      position: absolute;
+      bottom: 100%; left: 48%; transform: translateX(-50%);
+      width: 120px; height: 100px;
+      pointer-events: none; overflow: visible;
+    }
+    .smoke {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220,160,80,0.28), transparent 70%);
+      animation: smokeDrift 4s ease-out infinite;
+    }
+    .smoke:nth-child(1){width:28px;height:28px;left:20%;animation-delay:0s;}
+    .smoke:nth-child(2){width:20px;height:20px;left:48%;animation-delay:1.3s;}
+    .smoke:nth-child(3){width:24px;height:24px;left:70%;animation-delay:2.6s;}
+    @keyframes smokeDrift {
+      0%   { opacity:0.7; transform:translateY(0) scale(0.5) rotate(0deg); }
+      50%  { opacity:0.35; transform:translateY(-55px) scale(1.8) rotate(15deg); }
+      100% { opacity:0; transform:translateY(-110px) scale(2.8) rotate(-10deg); }
+    }
+
+    /* — COUNTER / CTA ROW — */
+    .stall-counter {
+      background: linear-gradient(180deg, #3A1A08, #251008);
+      border: 1.5px solid rgba(160,90,30,0.5);
+      border-radius: 3px;
+      padding: 18px 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .counter-info { }
+    .counter-role {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--gold);
+      text-shadow: 0 0 8px rgba(247,197,58,0.35);
+      margin-bottom: 4px;
+    }
+    .counter-edu {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+    }
+    .cta-group { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 22px;
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary {
+      background: transparent;
+      border: 2px solid var(--neon-orange);
+      color: var(--neon-orange);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--neon-orange);
+      transform: translateX(-101%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+      z-index: -1;
+    }
+    .btn-primary:hover { color: var(--bg); box-shadow: 0 0 20px rgba(255,123,0,0.4); }
+    .btn-primary:hover::before { transform: translateX(0); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 2px solid rgba(255,45,120,0.6);
+      color: var(--neon-pink);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,45,120,0.1);
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 16px rgba(255,45,120,0.25);
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: fadeUp 2s 1.2s both;
+    }
+    .scroll-label {
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      color: var(--muted); letter-spacing: 0.25em; text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 42px;
+      background: linear-gradient(to bottom, transparent, var(--neon-orange));
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100%{opacity:0.3;transform:scaleY(0.7);} 50%{opacity:1;transform:scaleY(1);}
+    }
+    @keyframes fadeUp {
+      from{opacity:0;transform:translateX(-50%) translateY(16px);}
+      to{opacity:1;transform:translateX(-50%) translateY(0);}
+    }
+
+    /* ══════════════════════════════════════
+       DIVIDER
+    ══════════════════════════════════════ */
+    .section-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,123,0,0.25) 40%, rgba(255,45,120,0.2) 60%, transparent 100%);
+    }
+
+    /* ══════════════════════════════════════
+       SECTION BASE
+    ══════════════════════════════════════ */
+    .section-wrap {
+      width: 100%; max-width: 1160px;
+      margin: 0 auto;
+      padding: 90px 5vw;
+    }
+
+    .section-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      color: var(--neon-pink); letter-spacing: 0.3em; text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .section-eyebrow::before {
+      content: ''; display: block;
+      width: 28px; height: 1px; background: var(--neon-pink);
+    }
+
+    .section-heading {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      color: var(--cream); line-height: 1.15; margin-bottom: 12px;
+    }
+
+    /* ══════════════════════════════════════
+       ABOUT SECTION
+    ══════════════════════════════════════ */
+    #about .section-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+
+    /* Chalkboard */
+    .chalk-board {
+      background: #102218;
+      border: 3px solid rgba(60,160,80,0.2);
+      border-radius: 3px;
+      padding: 36px;
+      position: relative;
+      box-shadow:
+        inset 0 0 50px rgba(0,0,0,0.5),
+        0 0 0 10px #3D1E0A,
+        0 0 0 13px #2A1206,
+        0 32px 80px rgba(0,0,0,0.6);
+    }
+    /* Chalk dust top edge */
+    .chalk-board::before {
+      content: '';
+      position: absolute; top: -3px; left: 0; right: 0; height: 3px;
+      background: rgba(200,220,200,0.08);
+    }
+    .chalk-board-header {
+      font-family: 'Kalam', cursive; font-size: 1.1rem;
+      color: var(--gold); text-align: center;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: 1.5px solid rgba(247,197,58,0.25);
+      text-shadow: 0 0 12px rgba(247,197,58,0.25);
+    }
+    .chalk-text {
+      font-family: 'Kalam', cursive; font-size: 0.97rem;
+      color: var(--chalk); line-height: 1.85;
+      margin-bottom: 14px;
+    }
+    .chalk-em { color: var(--neon-orange); font-weight: 700; }
+    .chalk-em2 { color: var(--neon-cyan); font-weight: 700; }
+
+    /* About right */
+    .info-badges {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin: 20px 0 28px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,123,0,0.08);
+      border: 1px solid rgba(255,123,0,0.25);
+      border-radius: 999px; padding: 5px 14px;
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      color: var(--neon-orange);
+    }
+
+    .achievements { list-style: none; }
+    .achievements li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.875rem; line-height: 1.55; color: var(--text);
+    }
+    .achievements li span.icon { color: var(--gold); flex-shrink: 0; margin-top: 1px; }
+
+    /* ══════════════════════════════════════
+       EXPERIENCE — RECEIPT
+    ══════════════════════════════════════ */
+    #experience .section-wrap { max-width: 640px; text-align: center; }
+
+    .receipt-card {
+      background: #FAF4E8;
+      color: #1A1410;
+      font-family: 'Space Mono', monospace;
+      padding: 44px 48px 56px;
+      margin-top: 44px;
+      position: relative;
+      box-shadow: 0 20px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.05);
+      text-align: left;
+    }
+    /* torn top */
+    .receipt-card::before {
+      content: '';
+      position: absolute; top: -14px; left: 0; right: 0; height: 14px;
+      background: radial-gradient(ellipse 5% 100% at 50% 100%, transparent 70%, #FAF4E8 70%) 0 0 / 28px 14px repeat-x;
+    }
+    /* torn bottom */
+    .receipt-card::after {
+      content: '';
+      position: absolute; bottom: -14px; left: 0; right: 0; height: 14px;
+      background: radial-gradient(ellipse 5% 100% at 50% 0%, transparent 70%, #FAF4E8 70%) 0 0 / 28px 14px repeat-x;
+    }
+    .r-shop {
+      font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      text-align: center; margin-bottom: 3px;
+    }
+    .r-sub {
+      font-size: 0.6rem; color: #777;
+      text-align: center; margin-bottom: 18px;
+    }
+    .r-hr { border: none; border-top: 1px dashed #B0A090; margin: 14px 0; }
+    .r-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.7rem; margin: 7px 0;
+    }
+    .r-row.bold { font-weight: 700; font-size: 0.75rem; }
+    .r-detail {
+      font-size: 0.62rem; color: #555;
+      padding-left: 14px; margin: 3px 0; line-height: 1.55;
+    }
+    .r-total { font-size: 0.85rem; font-weight: 700; }
+    .r-stamp-wrap { text-align: center; margin-top: 20px; }
+    .r-stamp {
+      display: inline-block;
+      border: 3px solid #CC2200; color: #CC2200;
+      padding: 5px 18px; font-size: 1.1rem;
+      letter-spacing: 0.22em; transform: rotate(-7deg);
+      opacity: 0.85;
+    }
+
+    /* ══════════════════════════════════════
+       PROJECTS — MENU BOARD
+    ══════════════════════════════════════ */
+    .menu-board {
+      background: #0A1C12;
+      border: 3px solid rgba(0,229,255,0.12);
+      padding: 40px 36px;
+      margin-top: 44px;
+      box-shadow:
+        inset 0 0 100px rgba(0,0,0,0.7),
+        0 0 0 10px #3D1E0A,
+        0 0 0 13px #2A1206,
+        0 30px 90px rgba(0,0,0,0.6);
+      border-radius: 2px;
+    }
+    .menu-board-title {
+      font-family: 'Kalam', cursive; font-size: 1.4rem;
+      color: var(--gold); text-align: center;
+      margin-bottom: 36px; letter-spacing: 0.05em;
+      text-shadow: 0 0 16px rgba(247,197,58,0.25);
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+    .menu-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 2px;
+      padding: 26px 24px 22px;
+      position: relative; overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                  border-color 0.35s, box-shadow 0.35s;
+      cursor: default;
+    }
+    .menu-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,123,0,0.06) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .menu-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(255,123,0,0.35);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,123,0,0.15);
+    }
+    .menu-card:hover::before { opacity: 1; }
+    .card-num {
+      position: absolute; top: 14px; right: 18px;
+      font-family: 'Yatra One', cursive; font-size: 2.2rem;
+      color: rgba(247,197,58,0.1); line-height: 1;
+    }
+    .card-status {
+      display: inline-flex; align-items: center;
+      background: rgba(255,123,0,0.12);
+      border: 1px solid rgba(255,123,0,0.28);
+      color: var(--neon-orange);
+      padding: 2px 10px;
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.1em; border-radius: 2px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-family: 'Kalam', cursive; font-size: 1.15rem;
+      color: var(--cream); margin-bottom: 8px; line-height: 1.3;
+    }
+    .card-desc {
+      font-size: 0.78rem; color: var(--muted);
+      line-height: 1.65; margin-bottom: 16px;
+    }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag {
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.18);
+      color: var(--neon-cyan);
+      padding: 2px 9px;
+      font-family: 'Space Mono', monospace; font-size: 0.58rem;
+      border-radius: 2px;
+    }
+
+    /* ══════════════════════════════════════
+       SKILLS — MASALA DABBA
+    ══════════════════════════════════════ */
+    .dabba-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px; margin-top: 44px;
+    }
+    .dabba {
+      background: radial-gradient(ellipse at top center, rgba(90,42,12,0.4) 0%, rgba(14,8,4,0.9) 100%);
+      border: 1px solid rgba(160,90,30,0.35);
+      border-radius: 48% 48% 42% 42% / 18% 18% 14% 14%;
+      padding: 34px 22px 28px;
+      text-align: center; position: relative;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+      overflow: hidden;
+    }
+    .dabba::before { /* lid rim */
+      content: '';
+      position: absolute; top: 0; left: 15%; right: 15%; height: 7px;
+      background: rgba(160,90,30,0.5);
+      border-radius: 0 0 50% 50%;
+    }
+    .dabba:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(160,90,30,0.3);
+    }
+    .dabba-label {
+      font-family: 'Kalam', cursive; font-size: 0.95rem;
+      color: var(--gold); margin-bottom: 14px;
+      text-shadow: 0 0 10px rgba(247,197,58,0.25);
+    }
+    .skill-chips {
+      display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
+    }
+    .chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: var(--text);
+      padding: 3px 9px;
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      border-radius: 2px;
+    }
+
+    /* ══════════════════════════════════════
+       CONTACT — ORDER COUNTER
+    ══════════════════════════════════════ */
+    #contact .section-wrap { text-align: center; }
+
+    .order-counter {
+      max-width: 560px; margin: 44px auto 0;
+      background: var(--bg2);
+      border: 1.5px solid rgba(255,123,0,0.18);
+      padding: 50px 48px;
+      position: relative;
+    }
+    .order-counter::before {
+      content: 'ORDER HERE';
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--neon-orange); color: var(--bg);
+      padding: 3px 20px;
+      font-family: 'Yatra One', cursive; font-size: 0.7rem;
+      letter-spacing: 0.2em; white-space: nowrap;
+    }
+
+    .contact-email {
+      font-family: 'Space Mono', monospace; font-size: clamp(0.75rem, 2vw, 0.9rem);
+      color: var(--neon-cyan);
+      text-shadow: 0 0 16px rgba(0,229,255,0.35);
+      margin-bottom: 6px;
+    }
+    .contact-phone {
+      font-family: 'Space Mono', monospace; font-size: 0.7rem;
+      color: var(--muted); margin-bottom: 32px;
+    }
+
+    .social-grid {
+      display: flex; flex-wrap: wrap;
+      gap: 12px; justify-content: center;
+    }
+    .social-link {
+      display: flex; align-items: center; gap: 7px;
+      padding: 12px 22px;
+      border: 1px solid rgba(255,255,255,0.09);
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      transition: all 0.28s;
+      border-radius: 2px;
+    }
+    .social-link:hover {
+      border-color: var(--neon-orange);
+      color: var(--neon-orange);
+      background: rgba(255,123,0,0.05);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      text-align: center; padding: 36px 20px 44px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-family: 'Space Mono', monospace; font-size: 0.6rem;
+      color: var(--muted); letter-spacing: 0.1em; line-height: 2;
+    }
+    footer span { color: var(--neon-orange); }
+
+    /* ══════════════════════════════════════
+       SCROLL REVEAL
+    ══════════════════════════════════════ */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal[data-delay="1"] { transition-delay: 0.1s; }
+    .reveal[data-delay="2"] { transition-delay: 0.2s; }
+    .reveal[data-delay="3"] { transition-delay: 0.3s; }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 860px) {
+      #about .section-wrap { grid-template-columns: 1fr; gap: 40px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .dabba-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      #navbar { padding: 0.8rem 1.4rem; }
+      .nav-links { gap: 1.2rem; }
+      .nav-links a { font-size: 0.6rem; }
+      .stall-body { padding: 22px 20px; }
+      .stall-counter { flex-direction: column; align-items: flex-start; }
+      .section-wrap { padding: 64px 5vw; }
+      .dabba-grid { grid-template-columns: 1fr; }
+      .receipt-card { padding: 32px 24px 44px; }
+      .order-counter { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-dot"></div>
+
+  <!-- ════════ NAVBAR ════════ -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">श्रेया's Dhaba</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Menu</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Order</a></li>
+    </ul>
+  </nav>
+
+  <!-- ════════ HERO — 3D STALL ════════ -->
+  <section id="hero">
+    <canvas id="stars-canvas"></canvas>
+    <div class="ground-glow"></div>
+
+    <div class="stall-3d">
+      <div class="stall-scene">
+
+        <!-- Roof -->
+        <div class="stall-roof"></div>
+
+        <!-- Scalloped fringe -->
+        <div class="stall-fringe" id="fringe"></div>
+
+        <!-- Fairy lights wire (SVG drawn by JS) -->
+        <div class="fairy-wire">
+          <svg id="fairy-svg" viewBox="0 0 780 28" preserveAspectRatio="none"></svg>
+        </div>
+
+        <!-- Stall body -->
+        <div class="stall-body">
+          <div class="smoke-wrap">
+            <div class="smoke"></div>
+            <div class="smoke"></div>
+            <div class="smoke"></div>
+          </div>
+
+          <div class="stall-top-stripe"></div>
+          <div class="neon-sign">Shreya's Dhaba</div>
+          <div class="neon-tagline">🍛 Full Stack Dev &amp; AI/ML Engineer ✦ Serving Hot Code 🔥</div>
+
+          <div class="stall-counter">
+            <div class="counter-info">
+              <div class="counter-role">B.Tech CSE @ KIIT, Bhubaneswar</div>
+              <div class="counter-edu">Class of 2027 · +91 9337561195</div>
+            </div>
+            <div class="cta-group">
+              <a href="#projects" class="btn btn-primary">See Menu →</a>
+              <a href="mailto:shreyadash2021@gmail.com" class="btn btn-ghost">Contact 📧</a>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- .stall-scene -->
+    </div><!-- .stall-3d -->
+
+    <div class="scroll-hint">
+      <span class="scroll-label">Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ════════ ABOUT ════════ -->
+  <section id="about">
+    <div class="section-wrap">
+
+      <!-- Chalkboard -->
+      <div class="chalk-board reveal">
+        <div class="chalk-board-header">✦ आज का स्पेशल — Today's Special ✦</div>
+        <p class="chalk-text">
+          Namaste! I'm <span class="chalk-em">Shreya Dash</span>, a Computer Science undergrad at
+          <span class="chalk-em">KIIT, Bhubaneswar</span> with a deep passion for
+          building intelligent systems that actually ship.
+        </p>
+        <p class="chalk-text">
+          From deploying <span class="chalk-em">5–6 production REST APIs in Spring Boot</span> at Uneecops to
+          engineering <span class="chalk-em2">CNN models with 94% forensic accuracy</span> —
+          I blend backend muscle with AI curiosity.
+        </p>
+        <p class="chalk-text">
+          Co-author of an <span class="chalk-em">AR/VR research paper</span> on AI-driven HCI,
+          Hackathon Finalist, IoT Lab Society Core Admin.
+          I build things that matter. 🚀
+        </p>
+      </div>
+
+      <!-- Right panel -->
+      <div class="reveal" data-delay="2">
+        <div class="section-eyebrow">About Me</div>
+        <h2 class="section-heading">Builder.<br>Researcher.<br>Problem-Solver.</h2>
+
+        <div class="info-badges">
+          <span class="badge">📍 Bhubaneswar, Odisha</span>
+          <span class="badge">🎓 B.Tech CSE 2027</span>
+          <span class="badge">💼 Open to Opportunities</span>
+          <span class="badge">🔬 AI/ML Enthusiast</span>
+        </div>
+
+        <ul class="achievements">
+          <li>
+            <span class="icon">✦</span>
+            Co-authored academic research paper on AR/VR technologies & AI-driven HCI applications
+          </li>
+          <li>
+            <span class="icon">✦</span>
+            Core Administrator, IoT Lab Society — directed workshops & managed developer community
+          </li>
+          <li>
+            <span class="icon">✦</span>
+            Finalist, Innovance 2.0 Hackathon — functional prototype in a 24-hour sprint
+          </li>
+          <li>
+            <span class="icon">✦</span>
+            100% on-time sprint delivery across 2 sprint cycles at Uneecops Technologies
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ════════ EXPERIENCE ════════ -->
+  <section id="experience">
+    <div class="section-wrap">
+      <div class="section-eyebrow reveal">Experience</div>
+      <h2 class="section-heading reveal" data-delay="1" style="text-align:center;">Order History</h2>
+
+      <div class="receipt-card reveal" data-delay="2">
+        <p class="r-shop">Uneecops Technologies</p>
+        <p class="r-sub">Software Development Intern · Java Backend · Bhubaneswar</p>
+        <hr class="r-hr">
+        <div class="r-row"><span>Period</span><span>May 2025 – Jun 2025</span></div>
+        <div class="r-row"><span>Domain</span><span>Java · Spring Boot · REST APIs</span></div>
+        <div class="r-row"><span>Methodology</span><span>Agile / Scrum</span></div>
+        <hr class="r-hr">
+        <div class="r-row bold"><span>Key Deliverables</span></div>
+        <p class="r-detail">✓ Designed & deployed 5–6 production RESTful APIs validated by successful end-to-end frontend integration</p>
+        <p class="r-detail">✓ Eliminated cross-team ambiguity across 3+ backend modules — zero integration blockers at sprint handoffs</p>
+        <p class="r-detail">✓ Shipped backend features across 2 sprint cycles with 100% on-time completion rate</p>
+        <p class="r-detail">✓ Documented complete DB schema, API contracts & inter-module dependencies for the production codebase</p>
+        <hr class="r-hr">
+        <div class="r-row r-total"><span>Impact Rating</span><span>⭐⭐⭐⭐⭐</span></div>
+        <div class="r-stamp-wrap"><div class="r-stamp">SHIPPED ✓</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ════════ PROJECTS ════════ -->
+  <section id="projects">
+    <div class="section-wrap">
+      <div class="section-eyebrow reveal">Projects</div>
+      <h2 class="section-heading reveal" data-delay="1">Today's Menu</h2>
+
+      <div class="menu-board reveal" data-delay="2">
+        <div class="menu-board-title">🍛 House Specials — Freshly Brewed 🍛</div>
+        <div class="menu-grid">
+
+          <div class="menu-card">
+            <div class="card-num">01</div>
+            <div class="card-status">🔬 IN DEVELOPMENT</div>
+            <div class="card-title">AEGIS-FORENSICS</div>
+            <div class="card-desc">
+              AI-powered digital forensic intelligence platform. 4 custom CNN models achieving 94% classification accuracy
+              across forensic categories. SHA-256 evidence hashing, blockchain-style audit trail, biometric suspect verification via DeepFace.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">TensorFlow</span>
+              <span class="tag">React 18</span>
+              <span class="tag">OpenCV</span>
+              <span class="tag">DeepFace</span>
+            </div>
+          </div>
+
+          <div class="menu-card">
+            <div class="card-num">02</div>
+            <div class="card-status">📈 IN DEVELOPMENT</div>
+            <div class="card-title">NVDA Stock Predictor</div>
+            <div class="card-desc">
+              End-to-end supervised ML pipeline for forecasting NVIDIA short-term closing prices using OHLCV data
+              via Alpaca API. Interactive analytics dashboard surfacing predictions, trends, and performance metrics.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Python</span>
+              <span class="tag">Scikit-Learn</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">Alpaca API</span>
+              <span class="tag">Matplotlib</span>
+            </div>
+          </div>
+
+          <div class="menu-card">
+            <div class="card-num">03</div>
+            <div class="card-status">⚡ IN DEVELOPMENT</div>
+            <div class="card-title">EV Charging Forecaster</div>
+            <div class="card-desc">
+              Geospatial data pipeline spanning 50+ countries. 3+ regression models for regional EV charging demand
+              forecasting with geospatial visualisations identifying infrastructure gaps worldwide.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Python</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">Scikit-Learn</span>
+              <span class="tag">Seaborn</span>
+              <span class="tag">EDA</span>
+            </div>
+          </div>
+
+          <div class="menu-card">
+            <div class="card-num">04</div>
+            <div class="card-status">💊 IN DEVELOPMENT</div>
+            <div class="card-title">MED Inventory System</div>
+            <div class="card-desc">
+              Full-stack medicine inventory management for 100+ entries. Dual interface (console + GUI),
+              expiry alerts, supplier records, and real-time MySQL CRUD operations via parameterised JDBC queries.
+            </div>
+            <div class="card-tags">
+              <span class="tag">Java</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">JDBC</span>
+              <span class="tag">HTML/CSS/JS</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ════════ SKILLS ════════ -->
+  <section id="skills">
+    <div class="section-wrap">
+      <div class="section-eyebrow reveal">Skills</div>
+      <h2 class="section-heading reveal" data-delay="1">The Masala Dabba</h2>
+      <p class="reveal" data-delay="2" style="color:var(--muted);font-size:0.88rem;margin-bottom:4px;">
+        Every good dish needs the right spices. Here's my collection.
+      </p>
+
+      <div class="dabba-grid">
+        <div class="dabba reveal">
+          <div class="dabba-label">🌶️ Languages</div>
+          <div class="skill-chips">
+            <span class="chip">Python</span>
+            <span class="chip">Java</span>
+            <span class="chip">C</span>
+            <span class="chip">C++</span>
+          </div>
+        </div>
+        <div class="dabba reveal" data-delay="1">
+          <div class="dabba-label">🧠 AI / ML</div>
+          <div class="skill-chips">
+            <span class="chip">TensorFlow</span>
+            <span class="chip">Keras</span>
+            <span class="chip">Scikit-Learn</span>
+            <span class="chip">OpenCV</span>
+            <span class="chip">CNN</span>
+            <span class="chip">DeepFace</span>
+            <span class="chip">Feature Eng.</span>
+          </div>
+        </div>
+        <div class="dabba reveal" data-delay="2">
+          <div class="dabba-label">🌐 Web & Backend</div>
+          <div class="skill-chips">
+            <span class="chip">React 18</span>
+            <span class="chip">Spring Boot</span>
+            <span class="chip">FastAPI</span>
+            <span class="chip">REST APIs</span>
+            <span class="chip">HTML5</span>
+            <span class="chip">CSS3</span>
+            <span class="chip">JS</span>
+          </div>
+        </div>
+        <div class="dabba reveal">
+          <div class="dabba-label">🗄️ Databases</div>
+          <div class="skill-chips">
+            <span class="chip">MySQL</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">SQLite</span>
+            <span class="chip">SQL</span>
+            <span class="chip">JDBC</span>
+          </div>
+        </div>
+        <div class="dabba reveal" data-delay="1">
+          <div class="dabba-label">🔧 Tools</div>
+          <div class="skill-chips">
+            <span class="chip">Git</span>
+            <span class="chip">GitHub</span>
+            <span class="chip">Linux</span>
+            <span class="chip">VS Code</span>
+            <span class="chip">Agile</span>
+            <span class="chip">Scrum</span>
+          </div>
+        </div>
+        <div class="dabba reveal" data-delay="2">
+          <div class="dabba-label">📚 Core CS</div>
+          <div class="skill-chips">
+            <span class="chip">DSA</span>
+            <span class="chip">OOP</span>
+            <span class="chip">DBMS</span>
+            <span class="chip">OS</span>
+            <span class="chip">CN</span>
+            <span class="chip">System Design</span>
+            <span class="chip">SDLC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ════════ CONTACT ════════ -->
+  <section id="contact">
+    <div class="section-wrap">
+      <div class="section-eyebrow reveal" style="justify-content:center;">Contact</div>
+      <h2 class="section-heading reveal" data-delay="1">Place Your Order</h2>
+      <p class="reveal" data-delay="2" style="color:var(--muted);font-size:0.88rem;">
+        Available for internships, research collaborations &amp; interesting problems.
+      </p>
+
+      <div class="order-counter reveal" data-delay="3">
+        <p class="contact-email">shreyadash2021@gmail.com</p>
+        <p class="contact-phone">+91 9337561195</p>
+
+        <div class="social-grid">
+          <a href="mailto:shreyadash2021@gmail.com" class="social-link">📧 Email</a>
+          <!-- Update these URLs with your actual handles -->
+          <a href="https://linkedin.com/in/shreyadash" class="social-link" target="_blank" rel="noopener">💼 LinkedIn</a>
+          <a href="https://github.com/shreyadash" class="social-link" target="_blank" rel="noopener">🐙 GitHub</a>
+          <a href="https://codeforces.com/profile/shreyadash" class="social-link" target="_blank" rel="noopener">⚔️ Codeforces</a>
+          <a href="https://leetcode.com/shreyadash" class="social-link" target="_blank" rel="noopener">🧩 LeetCode</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ FOOTER ════════ -->
+  <footer>
+    <p>Crafted with ☕ &amp; 🌶️ by <span>Shreya Dash</span> — © 2025</p>
+    <p>Built with Vanilla HTML · CSS · JS &nbsp;·&nbsp; GitHub Pages Ready</p>
+  </footer>
+
+  <!-- ════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════ -->
+  <script>
+    /* ── CUSTOM CURSOR ──────────────────── */
+    const $cur = document.getElementById('cursor');
+    const $dot = document.getElementById('cursor-dot');
+    let mx = 0, my = 0, cx = 0, cy = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      $dot.style.cssText = `left:${mx-2.5}px;top:${my-2.5}px`;
+    });
+
+    (function animCursor() {
+      cx += (mx - cx) * 0.13;
+      cy += (my - cy) * 0.13;
+      $cur.style.cssText = `left:${cx-11}px;top:${cy-11}px`;
+      requestAnimationFrame(animCursor);
+    })();
+
+    document.querySelectorAll('a,button,.menu-card,.dabba,.social-link').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+
+    /* ── STAR CANVAS ────────────────────── */
+    const canvas = document.getElementById('stars-canvas');
+    const ctx    = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const STARS = Array.from({length: 200}, () => ({
+      x: Math.random(), y: Math.random(),
+      r: Math.random() * 1.4 + 0.2,
+      speed: Math.random() * 0.0025 + 0.0008,
+      phase: Math.random() * Math.PI * 2
+    }));
+
+    function drawStars(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      STARS.forEach(s => {
+        const a = 0.25 + 0.75 * Math.abs(Math.sin(t * s.speed + s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,240,200,${a.toFixed(2)})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(drawStars);
+    }
+    requestAnimationFrame(drawStars);
+
+    /* ── FRINGE TEETH ───────────────────── */
+    const fringeEl = document.getElementById('fringe');
+    for (let i = 0; i < 32; i++) {
+      const t = document.createElement('div');
+      t.className = 'fringe-tooth';
+      fringeEl.appendChild(t);
+    }
+
+    /* ── FAIRY LIGHTS SVG ───────────────── */
+    (function buildFairyLights() {
+      const svg = document.getElementById('fairy-svg');
+      const W   = 780, H = 28;
+      const N   = 28;
+      const colors = ['#FF7B00','#FF2D78','#F7C53A','#00E5FF'];
+
+      // Catenary wire
+      const wire = document.createElementNS('http://www.w3.org/2000/svg','path');
+      let d = `M 0 6`;
+      for (let i = 1; i <= 20; i++) {
+        const x  = (i / 20) * W;
+        const sag = Math.sin((i / 20) * Math.PI) * 8;
+        d += ` L ${x} ${6 + sag}`;
+      }
+      wire.setAttribute('d', d);
+      wire.setAttribute('stroke', 'rgba(255,255,255,0.25)');
+      wire.setAttribute('stroke-width', '1.5');
+      wire.setAttribute('fill', 'none');
+      svg.appendChild(wire);
+
+      // Bulbs
+      for (let i = 0; i < N; i++) {
+        const pct  = (i + 0.5) / N;
+        const bx   = pct * W;
+        const by   = 6 + Math.sin(pct * Math.PI) * 8;
+        const col  = colors[i % colors.length];
+        const delay = (i * 0.18).toFixed(2);
+
+        // Stem
+        const stem = document.createElementNS('http://www.w3.org/2000/svg','line');
+        stem.setAttribute('x1', bx); stem.setAttribute('y1', by);
+        stem.setAttribute('x2', bx); stem.setAttribute('y2', by + 5);
+        stem.setAttribute('stroke', 'rgba(255,255,255,0.3)');
+        stem.setAttribute('stroke-width', '1');
+        svg.appendChild(stem);
+
+        // Bulb
+        const el = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+        el.setAttribute('cx', bx); el.setAttribute('cy', by + 10);
+        el.setAttribute('rx', '4'); el.setAttribute('ry', '6');
+        el.setAttribute('fill', col);
+        el.style.filter = `drop-shadow(0 0 4px ${col})`;
+        el.style.animation = `bulbPulse 2s ${delay}s ease-in-out infinite`;
+        svg.appendChild(el);
+      }
+
+      // Inject keyframe
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes bulbPulse {
+          0%,100%{opacity:1;}
+          50%{opacity:0.45;}
+        }
+      `;
+      document.head.appendChild(style);
+    })();
+
+    /* ── NAVBAR SCROLL ──────────────────── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ── SCROLL REVEAL ──────────────────── */
+    const reveals = document.querySelectorAll('.reveal');
+    const revObs  = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => revObs.observe(el));
+
+    /* ── NEON SIGN RANDOM GLITCH ────────── */
+    const neonSign = document.querySelector('.neon-sign');
+    function scheduleGlitch() {
+      setTimeout(() => {
+        const flashes = [60, 80, 60, 100, 50];
+        let i = 0;
+        function flash() {
+          neonSign.style.opacity = (i % 2 === 0) ? '0.15' : '1';
+          i++;
+          if (i < flashes.length) setTimeout(flash, flashes[i-1]);
+          else { neonSign.style.opacity = '1'; scheduleGlitch(); }
+        }
+        flash();
+      }, 4000 + Math.random() * 9000);
+    }
+    scheduleGlitch();
+
+    /* ── PARALLAX STARS ─────────────────── */
+    window.addEventListener('scroll', () => {
+      canvas.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+    }, { passive: true });
+  </script>
+</body>
+</html>
