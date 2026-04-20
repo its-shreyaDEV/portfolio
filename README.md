@@ -1,4 +1,5 @@
-# ⚡ Neon Dhaba | High-Performance Portfolio Engine
+# ⚡ Neon Dhaba 
+| High-Performance Portfolio Engine
 
 A creative, high-concurrency-ready portfolio built with a **Next.js 14 App Router**. This project explores the intersection of cultural aesthetics (Indian Dhaba) and modern systems engineering, focusing on optimized asset delivery and state management.
 
